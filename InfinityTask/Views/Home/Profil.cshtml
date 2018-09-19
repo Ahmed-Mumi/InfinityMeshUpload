@@ -1,0 +1,96 @@
+﻿@using InfinityTask.ViewModel
+@model InfinityTask.ViewModel.UsersViewModel
+@using PagedList;
+@using PagedList.Mvc;
+
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<h3 style="margin-top:20px">
+    <a href="#" class="btn btn-info btn-lg" style="display:inline-block">
+        <span class="glyphicon glyphicon-user"></span>
+    </a><h2 style="display:inline-block;margin-left:10px">@Model.User.Name</h2><hr/>
+    <div class="container">
+        <br />
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <fieldset class="col-md-6">
+                    <legend>User Details</legend>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <p>
+                                @Html.TextBoxFor(x => x.User.Name, new { @readonly = "true" })
+                                @Html.DisplayTextFor(x => x.User.Age)   years
+                            </p>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <a href="#" class="btn btn-primary" onclick="AddEditBlog(0,@Model.UserId)">Create a new blog</a>
+    <br /><br />
+    @if (!string.IsNullOrEmpty(Model.msg))
+    {
+        <h3 style="text-align:center">
+            @Html.DisplayTextFor(x => x.msg)
+        </h3>
+    }
+    else
+    {
+        using (Html.BeginForm("Profil", "Home", new { id = Model.UserId }))
+        {
+            @Html.TextBox("PublishFrom", null, new { @class = "form-control", @style = "display:inline-block;margin-right:15px", type = "date" })
+            @Html.TextBox("PublishTo", null, new { @class = "form-control", @style = "display:inline-block;", type = "date" })
+            <input type="submit" value="Search" class="btn btn-primary" />
+        }
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Summary</th>
+                    <th>Publishing datetime</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (UsersViewModel.BlogInfo x in Model.blogovi)
+                {
+                    <tr>
+                        <td>@x.Title</td>
+                        <td>@x.Summary</td>
+                        <td>@x.PublishingDateTime</td>
+                        <td>
+                            <a href="#" class="btn btn-danger" onclick="AddEditBlog(@x.Id,@Model.UserId)"><i class="glyphicon glyphicon-pencil"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.PagedListPager(Model.blogovi, page => Url.Action("Profil", new { page }))
+
+    }
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h3 class="modal-title">AddEdit blog</h3>
+                </div>
+                <div class="modal-body" id="myModalBodyDiv">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        var AddEditBlog = function (blogId, userId) {
+            var url = "/Home/AddEditBlog?blogId=" + blogId + "&userId=" + userId;
+            $("#myModalBodyDiv").load(url, function () {
+                $("#myModal").modal("show");
+            })
+        }
+    </script>

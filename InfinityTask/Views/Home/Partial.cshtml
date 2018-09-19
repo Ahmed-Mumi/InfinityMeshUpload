@@ -1,0 +1,46 @@
+﻿@model InfinityTask.ViewModel.BlogEditViewModel
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/ckeditor/ckeditor.js"></script>
+<form id="myForm">
+    @Html.HiddenFor(x => x.UserId)
+    @Html.HiddenFor(x => x.Id)
+    <label>Summary</label><br />
+    @Html.TextBoxFor(x => x.Summary, new { @class = "form-control" })
+    @Html.ValidationMessageFor(x => x.Summary, "", new { @style = "color:red" })<br />
+    <label>Title</label><br />
+    @Html.TextBoxFor(x => x.Title, new { @class = "form-control" })
+    @Html.ValidationMessageFor(x => x.Title, "", new { @style = "color:red" })<br />
+    <label>Content</label><br />
+    @Html.TextAreaFor(x => x.Content, new { @id = "FullDescription" })
+    @Html.ValidationMessageFor(x => x.Content, "", new { @style = "color:red" })<br />
+    <label> Publish datetime (has to be greater than today) </label><br />
+    @if (Model.Id > 0)
+    {
+        @Html.TextBoxFor(x => x.PublishingDateTime, "{0:yyyy-MM-dd}", new { @class = "form-control", @style = "width=500px", @type = "date" })
+    }
+    else
+    {
+        @Html.TextBoxFor(x => x.PublishingDateTime, new { @class = "form-control", @style = "width=500px", @type = "date" })
+    }
+    @Html.ValidationMessageFor(x => x.PublishingDateTime, "", new { @class = "form-control", @style = "color:red" })<br />
+    <input type="submit" value="@(Model.Id>0?"Save":"Add")" id="btnSubmit" class="btn btn-secondary" />
+
+</form> 
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script> 
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script> 
+<script>
+    //CKEDITOR.replace('FullDescription'); 
+    $(document).ready(function () { 
+        $.validator.unobtrusive.parse("#myForm"); 
+        $("#btnSubmit").click(function () {
+            //var content = CKEDITOR.instances.FullDescription.document.getBody().getHtml();
+            var content = ""; 
+            var myFormData = $("#myForm").serialize();
+            $.ajax({
+                type: "POST",
+                url: "/Home/Save?content=" + content,
+                data: myFormData
+            })
+        })
+    })
+</script>

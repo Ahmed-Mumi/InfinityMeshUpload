@@ -1,0 +1,52 @@
+﻿@using InfinityTask.Models
+@using InfinityTask.ViewModel
+@using PagedList;
+@using PagedList.Mvc;
+@model InfinityTask.ViewModel.UsersViewModel
+@{ 
+    ViewBag.Title = "Home Page";
+} 
+<div>
+    <div style="margin-top:100px;margin-bottom:30px">
+        <h2>The User List </h2>
+        <hr />
+        @using (Html.BeginForm("Index", "Home", FormMethod.Get))
+        {
+            @Html.TextBox("search", null, new { @class = "form-control", @style = "display:inline-block; width:70%" })
+            <input type="submit" value="Search" class="btn btn-primary" />
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(Model.msg))
+    {
+        <h3 style="text-align:center">
+            @Html.DisplayTextFor(x => x.msg)
+        </h3>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Email</th>
+                    <th>Blogs</th>
+                    <th>View Profile</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (UsersViewModel.UserInfo x in Model.users)
+                {
+                    <tr>
+                        <td>@x.Name</td>
+                        <td>@x.Age</td>
+                        <td>@x.Email</td>
+                        <td>@x.NumberOfBlogs</td>
+                        <td>@Html.ActionLink("View", "Profil", new { id = x.Id })</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.PagedListPager(Model.users, page => Url.Action("Index", new { page }))
+    }
+    </div>
